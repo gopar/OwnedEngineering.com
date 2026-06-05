@@ -1,5 +1,5 @@
 ---
-title: A Postgresql Upgrade Improved Query Speed By 63%
+title: A PostgreSQL Upgrade Improved Query Speed By 63%
 date: 2026-05-08
 categories: [postgresql]
 tags: []
@@ -79,22 +79,6 @@ what was most important was the fetching of models and their relations)
 <!-- - Warm queries: ~63% faster -->
 
 <!-- Optimization doesn't always mean optimizing query :) -->
-
-<!-- More details at ..... -->
-<!-- #+end_quote -->
-
-<!-- * Twitter -->
-<!-- #+begin_quote -->
-<!-- Upgraded PostgreSQL 12 → 17 -->
-<!-- Timescale 1.7.5 → 2.21.0 -->
-
-<!-- No code changes. -->
-
-<!-- - Cold queries: ~41 faster -->
-<!-- - Warm queries: ~63% faster -->
-
-<!-- Sometimes the best optimization -->
-<!-- is not running ancient software in prod. -->
 
 <!-- More details at ..... -->
 <!-- #+end_quote -->

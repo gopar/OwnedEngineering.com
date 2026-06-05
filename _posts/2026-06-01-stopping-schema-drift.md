@@ -12,13 +12,13 @@ the issue that we are having is syncing all the models to what the source of tru
 
 ## The current solution
 
-Unfortunately, the way this was solved was by creating a separate repo that will hold all the Django models but with
-read-only attributes and methods. That way other projects can simply install that project via Git and pip and be on
-their way. But there were problems, such as some models were drifting away from what was on the source of truth
-repository (new/update/dropped fields, read only fields, dependencies on abstract models, etc), engineers not updating
-the mirror, and the mirror repo didn't have any way of validating code changes. So if someone commits new changes, but
-they forgot to include a dependencies, wrote a field wrong, etc, then they would need to update the mirror again, tag it
-and release it.
+The way this was solved was by creating a separate repo that will hold all the Django models but with read-only
+attributes and methods. That way other projects can simply install that project via Git and pip and be on their way. But
+there were problems, such as some models were drifting away from what was on the source of truth repository
+(new/update/dropped fields, read only fields, dependencies on abstract models, etc), engineers not updating the mirror,
+and the mirror repo didn't have any way of validating code changes. So if someone commits new changes, but they forgot
+to include a dependencies, wrote a field wrong, etc, then they would need to update the mirror again, tag it and
+re-release it.
 
 
 ## Adding a test suite
@@ -76,10 +76,8 @@ SECRET_KEY = "test-secret-key-not-for-production"
 
 As you can see, it is extremely minimal to get a small Django project up and running.
 We are only setting up the essentials, for example using an in-memory database that is SQLite, and only installing the apps that are required.
-And then some other configurations that we need to have as well.
 
-
-Next we have the actual tests which are the meat of solution, split into 3 classes:
+Next we have the actual tests which are the meat of the solution, split into 3 classes:
 
 ```python
 """
@@ -133,7 +131,7 @@ class TestModelsImport:
 
 ```
 
-The first class, is straight forward. We make sure we get no import errors, otherwise we'll have to come back and update
+The first class is straight forward. We make sure we get no import errors, otherwise we'll have to come back and update
 the repo again until we get it right, losing engineering velocity.
 
 ```python
@@ -198,11 +196,11 @@ class TestModelIntrospection:
 ```
 
 Finally the third class checks that each model has fields, otherwise we have some models that are doing absolutely
-nothing. Probably an incomplete copy of whats in the source of truth repo.
+nothing. Probably an incomplete copy of what's in the source of truth repo.
 
 ## Long term fix
 Now the solution that we came up with works but only solves half the problem. The problem of making sure the mirror is
 synced with the source of truth is the issue that we haven't tackled yet. I will write about that part in a later post,
 but for now I think this serves as an example of setting up a project like this for success. If you see a project that
-needs some TLC and could benefit from something similiar to this, then I hope this will serve as an idea/guide as how to
-get a fix out.
+needs some TLC and could benefit from something similar to this, then this will serve as an idea/guide as how to get a
+fix out.

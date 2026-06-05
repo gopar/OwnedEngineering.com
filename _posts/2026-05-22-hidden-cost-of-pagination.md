@@ -3,10 +3,13 @@ title: Hidden Cost of Django Rest Framework Pagination
 date: 2026-05-22
 categories: [django]
 tags: [Django Rest Framework]
-description: Django Rest Framework, just like Django, always tries to be helpful, but it might not always be beneficial.
+description: The hidden cost of COUNT(*) and OFFSET on every paginated request.
 ---
 
-Django pagination has 2 problems. Both of which will start to hurt as you scale.
+Django pagination has 2 problems.
+
+- `OFFSET` degrading at scale.
+- `COUNT(*)` running on every request.
 
 We'll look at these problems through the eyes of Django Rest Framework (DRF) since it also uses Django's pagination internally. Specifically through:
 
@@ -14,9 +17,7 @@ We'll look at these problems through the eyes of Django Rest Framework (DRF) sin
 - LimitOffsetPagination
 - PageNumberPagination
 
-## Table of Contents
-
-Note: All of code sources are from Django 6.0 and DRF 3.16.1
+> Note: All of code sources are from Django 6.0 and DRF 3.16.1
 
 ## A look at LimitOffsetPagination
 
@@ -48,7 +49,7 @@ class LimitOffsetPagination(BasePagination):
 
 I've truncated the code to show only relevant parts.
 
-`LimitOffsetPagination` gets it's name from the SQL method it uses to paginate data (via `OFFSET`). It's been well
+`LimitOffsetPagination` gets its name from the SQL method it uses to paginate data (via `OFFSET`). It's been well
 documented that `OFFSET` is not ideal when there is a large amount of data, because it ends up reading all the data from
 the beginning of the query up to where it truncates. For example, if we want to fetch the next 50 entries after 1,000th
 place, then the database has to read all 1,000 entries plus the next 50 to return, making it really wasteful once we
@@ -57,7 +58,7 @@ reach a heavily populated table.
 This alone is rather wasteful and would deter some engineers from even adding this as a pagination option, but that is
 not the only issue with this type of pagination (specifically the class implementation).
 
-If we look at what's return from `get_paginated_response`, we can see that the payload has a key of `count`. Now if we
+If we look at what's returned from `get_paginated_response`, we can see that the payload has a key of `count`. Now if we
 trace where it originates (`get_count`), we then realize another unpleasant truth. And that is, that Django will do a
 `.count()` call on the queryset, which means that a sequential scan will have to happen in order to get an accurate
 count of rows in the table. On a large table, this might cross the acceptable threshold of a response time, plus it adds
@@ -101,7 +102,7 @@ that same request). Both `get_next_link` and `get_previous_link` don't help eith
 determine if more pages exist. This means you can't skip the `COUNT(*)` query for knowing whether a next or previous
 link should even be generated. No count, no links.
 
-## A Look At CursorPagination
+## A look At CursorPagination
 
 Let's see if `CursorPagination` is any better:
 

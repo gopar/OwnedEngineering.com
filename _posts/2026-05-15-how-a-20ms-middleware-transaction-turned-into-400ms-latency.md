@@ -85,9 +85,9 @@ This process **kills concurrency**, since now we have to wait sequentially for u
 
 There are several ways to approach this. The simplest: don’t update user state on every request.
 
-The solution that we recommended was to add caching (cause hey, we all could use a little more caching), with a
-customize-able timeout as to when to update the `last_login` again. Also, flamegraphs collected with
-[py-spy](https://github.com/benfred/py-spy) showed **application time spent in this path drop from 34.91% to 4.81%**.
+The solution that we recommended was to add caching, with a customize-able timeout as to when to update the `last_login`
+again. Also, flamegraphs collected with [py-spy](https://github.com/benfred/py-spy) showed **application time spent in
+this path drop from 34.91% to 4.81%**.
 
 Here it is at 34.91%:
 ![Before fix](/assets/images/flamegraph-before-login-service-34.jpg)
@@ -165,8 +165,8 @@ Another solution would be to make the writes asynchronously (via celery) to move
 request/response life cycle. But this brings up an issue such as race conditions (an older task with an old timestamp
 might overwrite a newer entry), so making tasks idempotent would be needed.
 
-Now, we investigated whether updating on every request was truly necessary, but couldn’t identify a requirement that
-justified it. We can't either easily remove transaction and row locking from the package since we don't know what other
-teams/applications might rely on that logic (even if its a bit unorthodox).
+We also investigated whether updating on every request was even necessary but we couldn't find a requirement that
+justified it. Still, removing the transaction and row locking from the package wasn't an option since we didn't know
+what other teams depended on that behavior.
 
-This debugging story hopefully serves as another cautious tale of writing middleware.
+With all this being said, this debugging story should serve as another cautionary tale of writing middleware.
