@@ -63,9 +63,9 @@ So in the end, upgrade path looked like this:
 See [TimescaleDB Documentation](https://www.tigerdata.com/docs/self-hosted/latest/upgrades/major-upgrade)
 
 ##  Takeaway
-Hopefully this post shows the upsides of upgrading your database (security patches + performance) and shows that you
-don't need perfect instrumentation to create benchmarks as long as you are benchmarking the correct things (In this case
-what was most important was the fetching of models and their relations)
+This post shows the upsides of upgrading your database (security patches + performance) and shows that you don't need
+perfect instrumentation to create benchmarks as long as you are benchmarking the correct things (In this case what was
+most important was the fetching of models and their relations)
 
 <!-- * Linkedin -->
 <!-- #+begin_quote -->
